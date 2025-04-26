@@ -43,7 +43,7 @@ import SurfacePaper from "../components/SurfacePaper"
 import DialogBox from "../components/DialogBox"
 import normalize, { SCREEN_HEIGHT, SCREEN_WIDTH } from "react-native-normalize"
 import ScrollableListContainer from "../components/ScrollableListContainer"
-import { loginStorage } from "../storage/appStorage"
+import { ezetapStorage, loginStorage } from "../storage/appStorage"
 import { CalculatorShowBillData, LoginData, LoginDataMessage, RecentBillsData, ShowBillData } from "../models/api_types"
 import { AppStore } from "../context/AppContext"
 import useBillSummary from "../hooks/api/useBillSummary"
@@ -61,6 +61,8 @@ import useCalculations from "../hooks/useCalculations"
 import DialogBoxForReprint from "../components/DialogBoxForReprint"
 import DialogForBillsInCalculatorMode from "../components/DialogForBillsInCalculatorMode"
 import { AppStoreContext } from "../models/custom_types"
+import RNEzetapSdk from "react-native-ezetap-sdk"
+import { useThermalPrint } from "../hooks/printables/useThermalPrint"
 
 function HomeScreen() {
   const theme = usePaperColorScheme()
@@ -75,7 +77,8 @@ function HomeScreen() {
   const { fetchRecentBills } = useRecentBills()
   const { fetchBill } = useShowBill()
   const { fetchVersionInfo } = useVersionCheck()
-  const { rePrint, rePrintWithoutGst, printDuplicateBillCalculateMode } = useBluetoothPrint()
+  const { rePrint, printDuplicateBillCalculateMode } = useBluetoothPrint()
+  const { rePrintWithoutGst } = useThermalPrint()
   const { cancelBill } = useCancelBill()
   const { fetchCalcBill } = useCalculatorShowBill()
   const {
@@ -140,6 +143,41 @@ function HomeScreen() {
   // let netTotal = 0
   // let totalDiscount = 0
 
+  // Ezetap SDK Initialization
+  const initRazorpay = async () => {
+    // Debug Device
+    var withAppKey =
+      '{"userName":' +
+      "9903044748" +
+      ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+
+    // Release Device
+    // var withAppKey =
+    //   '{"userName":' +
+    //   "5551713830" +
+    //   ',"demoAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","prodAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","merchantName":"NILACHAKRA_MULTIPURPOSE_C","appMode":"PROD","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    var response = await RNEzetapSdk.initialize(withAppKey)
+    console.log(response)
+    // var jsonData = JSON.parse(response)
+    // setRazorpayInitializationJson(jsonData)
+    ezetapStorage.set("ezetap-initialization-json", response)
+  }
+
+  const init = async () => {
+    console.log(
+      "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+      ezetapStorage.contains("ezetap-initialization-json"),
+      ezetapStorage.getString("ezetap-initialization-json"),
+    )
+    // if (!ezetapStorage.contains("ezetap-initialization-json")) {
+    await initRazorpay()
+
+    var res = await RNEzetapSdk.prepareDevice()
+    console.warn("RAZORPAY===PREPARE DEVICE", res)
+    // }
+  }
+
+
   useEffect(() => {
     SplashScreen.hide()
 
@@ -151,6 +189,7 @@ function HomeScreen() {
     handleGetReceiptSettings()
     handleGetBillSummary()
     handleGetRecentBills()
+    // init()
     setTimeout(() => {
       setRefreshing(false)
     }, 2000)

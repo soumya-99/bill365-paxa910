@@ -4,6 +4,10 @@ export const loginStorage = new MMKV({
   id: "login-store",
 })
 
+export const ezetapStorage = new MMKV({
+  id: "ezetap-store"
+})
+
 // export const receiptSettingsStorage = new MMKV({
 //     id: "receipt-settings-store"
 // })

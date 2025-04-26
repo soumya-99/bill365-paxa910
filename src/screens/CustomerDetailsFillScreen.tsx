@@ -41,6 +41,7 @@ import {
 } from "../models/api_types"
 import useBillSms2 from "../hooks/api/useBillSms2"
 import QRCode from "react-native-qrcode-svg"
+import { useThermalPrint } from "../hooks/printables/useThermalPrint"
 
 const CustomerDetailsFillScreen = () => {
   const isFocused = useIsFocused()
@@ -58,7 +59,8 @@ const CustomerDetailsFillScreen = () => {
     receiptSettings?.gst_type,
   )
 
-  const { printReceipt, printReceiptWithoutGst } = useBluetoothPrint()
+  // const { printReceipt, printReceiptWithoutGst } = useBluetoothPrint()
+  const { printReceipt, printReceiptWithoutGst } = useThermalPrint()
   const {
     grandTotalCalculate,
     grandTotalWithGSTCalculate,

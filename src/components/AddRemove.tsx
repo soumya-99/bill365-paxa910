@@ -18,7 +18,7 @@ const AddRemove = ({ add, remove, value, isAddDisabled }: AddRemoveProps) => {
         <View style={{
             flexDirection: "row",
             position: "absolute",
-            left: 210,
+            left: 170,
             justifyContent: "center",
             alignItems: "center",
             alignSelf: "center"
