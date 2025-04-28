@@ -191,7 +191,7 @@ const AppContext = ({ children }) => {
       user_id: loginStore?.user_id
     }
 
-    await logout(logoutCreds).then(res => {
+    await logout(logoutCreds).then(res => {         
       loginStorage.clearAll()
       fileStorage.clearAll()
       productStorage.clearAll()

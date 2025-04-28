@@ -114,6 +114,7 @@ function HomeScreen() {
   )
   const [cancelledBillStatus, setCancelledBillStatus] = useState<"Y" | "N">()
   const [gstFlag, setGstFlag] = useState<"Y" | "N">()
+  // var gstFlag = ""
   const [gstType, setGstType] = useState<"I" | "E">()
 
   const [refreshing, setRefreshing] = useState<boolean>(() => false)
@@ -215,9 +216,19 @@ function HomeScreen() {
     }
   }
 
+  const handleRecentBillListClick = (rcptNo: number) => {
+    setVisible(true)
+    handleGetBill(rcptNo)
+    setCurrentReceiptNo(rcptNo)
+    setGstFlag(billedSaleData[0]?.gst_flag)
+    // gstFlag = billedSaleData[0]?.gst_flag
+    setGstType(billedSaleData[0]?.gst_type)
+  }
+
   const handleRePrintReceipt = (cancelFlag: boolean) => {
+    console.log("GST FLAG", gstFlag)
     if (billedSaleData.length > 0) {
-      gstFlag === "N"
+      billedSaleData[0]?.gst_flag === "N"
         ? rePrintWithoutGst(
           billedSaleData,
           // netTotal,
@@ -237,7 +248,7 @@ function HomeScreen() {
           false,
           cancelFlag,
         )
-        : gstType === "E"
+        : billedSaleData[0]?.gst_type === "E"
           ? rePrint(
             billedSaleData,
             // netTotal,
@@ -382,13 +393,14 @@ function HomeScreen() {
     })
   }
 
-  const handleRecentBillListClick = (rcptNo: number) => {
-    setVisible(true)
-    handleGetBill(rcptNo)
-    setCurrentReceiptNo(rcptNo)
-    setGstFlag(billedSaleData[0]?.gst_flag)
-    setGstType(billedSaleData[0]?.gst_type)
-  }
+  // const handleRecentBillListClick = (rcptNo: number) => {
+  //   setVisible(true)
+  //   handleGetBill(rcptNo)
+  //   setCurrentReceiptNo(rcptNo)
+  //   // setGstFlag(billedSaleData[0]?.gst_flag)
+  //   gstFlag = billedSaleData[0]?.gst_flag
+  //   setGstType(billedSaleData[0]?.gst_type)
+  // }
 
   const handleBillListClickCalculatorMode = (rcptNo: number) => {
     setVisible2(true)

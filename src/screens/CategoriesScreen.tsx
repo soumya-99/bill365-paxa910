@@ -27,6 +27,7 @@ import { clearStates } from "../utils/clearStates"
 import SurfacePaper from "../components/SurfacePaper"
 import AnimatedFABPaper from "../components/AnimatedFABPaper"
 import normalize from "react-native-normalize"
+import LoadingOverlay from "../components/LoadingOverlay"
 
 function CategoriesScreen() {
     const theme = usePaperColorScheme()
@@ -59,6 +60,7 @@ function CategoriesScreen() {
     const [totalPrice, setTotalPrice] = useState(() => 0)
     const [totalDiscountedAmount, setTotalDiscountedAmount] = useState(() => 0)
     const [clear, setClear] = useState(() => false)
+    const [loading, setLoading] = useState(() => false)
 
     useEffect(() => {
         setAddedProducts(itemsStore)
@@ -66,8 +68,14 @@ function CategoriesScreen() {
         setTotalDiscountedAmount(totalDiscountedAmountStore)
     }, [isFocused])
 
+    const getCategories = async () => {
+        setLoading(true)
+        await handleGetCategories()
+        setLoading(false)
+    }
+
     useEffect(() => {
-        handleGetCategories()
+        getCategories()
     }, [])
 
     const onPress = (catgId: number, catgName: string, catgPhoto: string) => {
@@ -217,6 +225,8 @@ function CategoriesScreen() {
                     </SurfacePaper>
                 }
             </ScrollView>
+
+            {loading && <LoadingOverlay />}
 
             {
                 productStorage?.contains("products-data") && <AnimatedFABPaper
